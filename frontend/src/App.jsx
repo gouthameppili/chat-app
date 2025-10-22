@@ -1,7 +1,7 @@
 import React from 'react'
 import ChatPage from './pages/ChatPage.jsx';
 import LoginPage from './pages/LoginPage.jsx';
-import SignupPage from './pages/SignupPage.jsx';
+import SignUpPage from './pages/SignupPage.jsx';
 import { Routes, Route } from 'react-router';
 import { useAuthStore } from './store/useAuthStore.js';
 
@@ -22,7 +22,7 @@ export default function App() {
       <Routes>
         <Route path="/" element={<ChatPage />} />
         <Route path="/login" element={<LoginPage />} />
-        <Route path="/signup" element={<SignupPage />} />
+        <Route path="/signup" element={<SignUpPage />} />
       </Routes>
     </div>
   )
