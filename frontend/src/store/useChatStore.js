@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { axiosInstance } from "../lib/axios";
+import axios from "axios";
 
 export const useChatStore = create((set, get) => ({
   allContacts: [],
@@ -31,6 +32,7 @@ export const useChatStore = create((set, get) => ({
             set({ isUserLoading: false});
         }
     },
+
     getMyChatPartners: async() => {
         set({ isUserLoading: true });
         try {
@@ -41,6 +43,21 @@ export const useChatStore = create((set, get) => ({
         }
         finally{
             set({ isUserLoading: false});
+        }
+    },
+
+    getMessagesByUserId: async(userId) => {
+        set({ isMessagesLoading: true});
+
+        try {
+            const res = await axiosInstance.get(`/messages/${userId}`);
+            set({ messages: res.data});
+        } catch (error) {
+            toast.error(error.response?.data?.message || "something went wrong");
+        }
+
+        finally{
+            set({ isMessagesLoading: false});
         }
     }
 }))
