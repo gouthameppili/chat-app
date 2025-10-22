@@ -1,7 +1,7 @@
 import React from 'react'
 import ChatPage from './pages/ChatPage.jsx';
 import LoginPage from './pages/LoginPage.jsx';
-import SignUpPage from './pages/SignupPage.jsx';
+import SignUpPage from './pages/SignUpPage.jsx';
 import { Routes, Route } from 'react-router';
 import { useAuthStore } from './store/useAuthStore.js';
 
