@@ -8,42 +8,38 @@ const app = express();
 const server = http.createServer(app);
 
 const io = new Server(server, {
-    cors: {
-        origin: [ENV.CLIENT_URL],
-        credentials: true,
-    },
+  cors: {
+    origin: [ENV.CLIENT_URL],
+    credentials: true,
+  },
 });
 
-//applying authentication middleware to socket connections
-
+// apply authentication middleware to all socket connections
 io.use(socketAuthMiddleware);
 
-//to store online users
-// ... (imports and server setup are the same)
+// we will use this function to check if the user is online or not
+export function getReceiverSocketId(userId) {
+  return userSocketMap[userId];
+}
 
-const userSocketMap = {};
+// this is for storig online users
+const userSocketMap = {}; // {userId:socketId}
 
 io.on("connection", (socket) => {
-    console.log("A user connected", socket.user.fullName);
+  console.log("A user connected", socket.user.fullName);
 
-    const userId = socket.userId;
-    if (userId) {
-        userSocketMap[userId] = socket.id;
-    }
+  const userId = socket.userId;
+  userSocketMap[userId] = socket.id;
 
-    // Send the updated list of online users to everyone
+  // io.emit() is used to send events to all connected clients
+  io.emit("getOnlineUsers", Object.keys(userSocketMap));
+
+  // with socket.on we listen for events from clients
+  socket.on("disconnect", () => {
+    console.log("A user disconnected", socket.user.fullName);
+    delete userSocketMap[userId];
     io.emit("getOnlineUsers", Object.keys(userSocketMap));
-
-    socket.on("disconnect", () => {
-        console.log("A user disconnected", socket.user.fullName);
-        const userId = socket.userId;
-        // FIX: Only delete the user if the disconnecting socket is the one in the map
-        if (userId && userSocketMap[userId] === socket.id) {
-            delete userSocketMap[userId];
-            // Resend the online users list after deletion
-            io.emit("getOnlineUsers", Object.keys(userSocketMap));
-        }
-    });
+  });
 });
 
 export { io, app, server };
